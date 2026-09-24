@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>TEST</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #e9e2d2;
+			--ink: #000;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			min-height: 100vh;
+			overflow: hidden;
+			color: var(--ink);
+			background-color: var(--paper);
+			background-image:
+				radial-gradient(circle at 18% 22%, rgba(255, 255, 255, .24) 0 1px, transparent 1.5px),
+				radial-gradient(circle at 76% 68%, rgba(0, 0, 0, .06) 0 1px, transparent 1.5px),
+				linear-gradient(115deg, transparent 0 48%, rgba(255, 255, 255, .16) 49%, transparent 50%),
+				linear-gradient(35deg, rgba(0, 0, 0, .025), transparent 35%, rgba(255, 255, 255, .12));
+			background-size: 13px 13px, 17px 17px, 100% 100%, 100% 100%;
+		}
+
+		h1 {
+			margin: 0;
+			padding: 22px 24px;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: clamp(4rem, 13vw, 11rem);
+			font-weight: 700;
+			line-height: .85;
+			letter-spacing: 0;
+		}
+
+		#music {
+			position: fixed;
+			width: 1px;
+			height: 1px;
+			border: 0;
+			opacity: 0;
+			pointer-events: none;
+		}
+	</style>
+</head>
+<body>
+	<h1>TEST</h1>
+
+	<div id="music" aria-hidden="true"></div>
+	<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+	<script>
+		window.onSpotifyIframeApiReady = function (IFrameAPI) {
+			IFrameAPI.createController(document.getElementById('music'), {
+				uri: 'spotify:track:3hFKBe3hcRPZKKPV0RRnig',
+				width: '1',
+				height: '1'
+			}, function (controller) {
+				controller.addListener('playback_update', function (event) {
+					var playback = event.data;
+					if (!playback.isPaused && playback.duration > 0 && playback.position >= playback.duration - 500) {
+						controller.seek(0);
+						controller.play();
+					}
+				});
+				controller.play();
+			});
+		};
+	</script>
+</body>
+</html>
