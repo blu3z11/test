@@ -53,31 +53,69 @@
 			opacity: 0;
 			pointer-events: none;
 		}
+
+		#playButton {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: #22c55e;
+			color: white;
+			border: none;
+			border-radius: 12px;
+			padding: 16px 32px;
+			font-size: 18px;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: background-color 0.3s ease;
+		}
+
+		#playButton:hover {
+			background-color: #16a34a;
+		}
+
+		#playButton:active {
+			transform: translate(-50%, -50%) scale(0.98);
+		}
 	</style>
 </head>
 <body>
-	<h1>NOW PLAYING - Ugly Boy by Dyego</h1>
+	<h1 id="title">...</h1>
+
+	<button id="playButton">PLAY</button>
 
 	<div id="music" aria-hidden="true"></div>
 	<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 	<script>
+		let controller = null;
+
 		// Autoplay on page load
 		window.onSpotifyIframeApiReady = function (IFrameAPI) {
 			IFrameAPI.createController(document.getElementById('music'), {
 				uri: 'spotify:track:3hFKBe3hcRPZKKPV0RRnig',
 				width: '1',
 				height: '1'
-			}, function (controller) {
-				controller.addListener('playback_update', function (event) {
+			}, function (ctrl) {
+				controller = ctrl;
+				ctrl.addListener('playback_update', function (event) {
 					var playback = event.data;
 					if (!playback.isPaused && playback.duration > 0 && playback.position >= playback.duration - 500) {
-						controller.seek(0);
-						controller.play();
+						ctrl.seek(0);
+						ctrl.play();
 					}
 				});
-				controller.play();
 			});
 		};
+
+		// Handle play button click
+		document.getElementById('playButton').addEventListener('click', function () {
+			if (controller) {
+				controller.play();
+				document.getElementById('title').textContent = 'NOW PLAYING - Ugly Boy by Dyego';
+				document.getElementById('playButton').style.display = 'none';
+			}
+		});
 	</script>
 </body>
 </html>
