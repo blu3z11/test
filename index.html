@@ -61,22 +61,26 @@
 	<div id="music" aria-hidden="true"></div>
 	<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 	<script>
-		window.onSpotifyIframeApiReady = function (IFrameAPI) {
-			IFrameAPI.createController(document.getElementById('music'), {
-				uri: 'spotify:track:3hFKBe3hcRPZKKPV0RRnig',
-				width: '1',
-				height: '1'
-			}, function (controller) {
-				controller.addListener('playback_update', function (event) {
-					var playback = event.data;
-					if (!playback.isPaused && playback.duration > 0 && playback.position >= playback.duration - 500) {
-						controller.seek(0);
-						controller.play();
-					}
+		// Trigger autoplay with user interaction
+		document.addEventListener('click', function initAutoplay() {
+			window.onSpotifyIframeApiReady = function (IFrameAPI) {
+				IFrameAPI.createController(document.getElementById('music'), {
+					uri: 'spotify:track:3hFKBe3hcRPZKKPV0RRnig',
+					width: '1',
+					height: '1'
+				}, function (controller) {
+					controller.addListener('playback_update', function (event) {
+						var playback = event.data;
+						if (!playback.isPaused && playback.duration > 0 && playback.position >= playback.duration - 500) {
+							controller.seek(0);
+							controller.play();
+						}
+					});
+					controller.play();
 				});
-				controller.play();
-			});
-		};
+			};
+			document.removeEventListener('click', initAutoplay);
+		}, { once: true });
 	</script>
 </body>
 </html>
